@@ -1,20 +1,13 @@
 import fs from "fs";
 import https from "https";
 
-export async function createAudio(texto, index) {
-  return new Promise((resolve, reject) => {
-    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(texto)}&tl=es&client=tw-ob`;
-    const filePath = `audio_${index}.mp3`;
-
-    const file = fs.createWriteStream(filePath);
-    https.get(url, res => {
+export async function createAudio(texto,index){
+  return new Promise((r,rej)=>{
+    const url=`https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(texto)}&tl=es&client=tw-ob`;
+    const file=fs.createWriteStream(`audios/audio${index}.mp3`);
+    https.get(url,res=>{
       res.pipe(file);
-      file.on("finish", () => file.close(resolve));
-    }).on("error", reject);
+      file.on("finish",()=>file.close(r));
+    }).on("error",rej);
   });
-
-  // // Comentado: ElevenLabs
-  // const response = await fetch("https://api.elevenlabs.io/...", {...});
-  // const buffer = await response.arrayBuffer();
-  // fs.writeFileSync(`audio_${index}.mp3`, Buffer.from(buffer));
 }
