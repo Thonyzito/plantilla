@@ -27,7 +27,7 @@ def generar():
         global modo_actual
         modo_actual = modo
 
-        result = subprocess.run(["python3", "ejecutar.py"], capture_output=True, text=True)
+        result = subprocess.run(["python3", "generar.py"], capture_output=True, text=True)
 
         if result.returncode != 0:
             return jsonify({"success": False, "error": result.stderr})
