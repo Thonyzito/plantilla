@@ -1,8 +1,12 @@
 # app.py
-from flask import Flask, request, send_file, jsonify
+from flask import Flask, request, send_file, jsonify, send_from_directory
 import subprocess, os
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="public")
+
+@app.route('/')
+def index():
+    return send_from_directory('public', 'index.html')
 
 modo_actual = ""
 
