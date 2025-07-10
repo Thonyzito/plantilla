@@ -17,17 +17,35 @@
 <button onclick="descargar()">⬇️ Descargar resultado</button>
 <script>
 async function empezar() {
-  document.getElementById("logs").innerText="Generando contenido...";
-  const res = await fetch('/generar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    eleven_api:document.getElementById("eleven").value,
-    pexels_api:document.getElementById("pexels").value,
-    modo:document.getElementById("modo").value,
-    guiones:document.getElementById("guiones").value,
-    etiquetas:document.getElementById("etiquetas").value
-  })});
-  const j = await res.json();
-  document.getElementById("logs").innerText = j.logs || j.error;
+  const logs = document.getElementById("logs");
+  logs.innerText = "⏳ Generando contenido...";
+
+  try {
+    const res = await fetch("/generar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eleven_api: document.getElementById("eleven").value,
+        pexels_api: document.getElementById("pexels").value,
+        modo: document.getElementById("modo").value,
+        guiones: document.getElementById("guiones").value,
+        etiquetas: document.getElementById("etiquetas").value
+      })
+    });
+
+    const j = await res.json();
+
+    if (j.success) {
+      logs.innerText = j.logs || "✅ Proceso completado sin logs.";
+    } else {
+      logs.innerText = "❌ Error: " + (j.error || "Error desconocido del servidor");
+    }
+
+  } catch (err) {
+    logs.innerText = "❌ Error de red: " + err.message;
+  }
 }
+
 function descargar(){
   const modo = document.getElementById("modo").value;
   window.location.href = modo==='video'?'/descargar_video':'/descargar_carrusel';
