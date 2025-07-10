@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generador de Reels y Carruseles</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      background: #111;
+      color: #fff;
+    }
+    input, textarea, select, button {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+    }
+    button {
+      background: #00c897;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #logs {
+      background: #000;
+      padding: 1rem;
+      white-space: pre-wrap;
+      border: 1px solid #333;
+      height: 300px;
+      overflow-y: scroll;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎥 Generador IA</h1>
+
+  <label>🔑 ElevenLabs API Key</label>
+  <input id="eleven" type="text" placeholder="tu_clave_de_elevenlabs">
+
+  <label>📷 Pexels API Key</label>
+  <input id="pexels" type="text" placeholder="tu_clave_de_pexels">
+
+  <label>🎛 Modo</label>
+  <select id="modo">
+    <option value="video">video</option>
+    <option value="carrusel">carrusel</option>
+  </select>
+
+  <label>📝 Guiones (una línea por texto)</label>
+  <textarea id="guiones" rows="6">¿Sabías que puedes automatizar tus ventas?</textarea>
+
+  <label>🏷 Etiquetas (una línea por cada guion, en inglés)</label>
+  <textarea id="etiquetas" rows="6">automation</textarea>
+
+  <button onclick="empezar()">🚀 Empezar</button>
+
+  <div id="logs">⌛ Esperando instrucciones...</div>
+
+  <button onclick="descargar()">⬇️ Descargar resultado</button>
+
+  <script>
+    async function empezar() {
+      const data = {
+        eleven_api: document.getElementById("eleven").value,
+        pexels_api: document.getElementById("pexels").value,
+        modo: document.getElementById("modo").value,
+        guiones: document.getElementById("guiones").value,
+        etiquetas: document.getElementById("etiquetas").value,
+      };
+
+      document.getElementById("logs").innerText = "⏳ Generando contenido...";
+
+      try {
+        const res = await fetch("/generar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const json = await res.json();
+        if (json.success) {
+          document.getElementById("logs").innerText = json.logs;
+        } else {
+          document.getElementById("logs").innerText = "❌ Error: " + json.error;
+        }
+      } catch (err) {
+        document.getElementById("logs").innerText = "❌ Error inesperado: " + err;
+      }
+    }
+
+    async function descargar() {
+      const modo = document.getElementById("modo").value;
+      const endpoint = modo === "video" ? "/descargar_video" : "/descargar_carrusel";
+      window.location.href = endpoint;
+    }
+  </script>
+</body>
+</html>
