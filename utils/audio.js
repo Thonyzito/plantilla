@@ -1,19 +1,20 @@
-// utils/audio.js
 import fs from "fs";
-import gTTS from "gtts";
+import https from "https";
 
 export async function createAudio(texto, index) {
   return new Promise((resolve, reject) => {
-    const gtts = new gTTS(texto, "es");
+    const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(texto)}&tl=es&client=tw-ob`;
     const filePath = `audio_${index}.mp3`;
-    gtts.save(filePath, err => {
-      if (err) reject(err);
-      else resolve();
-    });
+
+    const file = fs.createWriteStream(filePath);
+    https.get(url, res => {
+      res.pipe(file);
+      file.on("finish", () => file.close(resolve));
+    }).on("error", reject);
   });
 
-  // // Comentado: ElevenLabs para usar después
-  // const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/...", { method: "POST", headers: {...}, body: ... });
+  // // Comentado: ElevenLabs
+  // const response = await fetch("https://api.elevenlabs.io/...", {...});
   // const buffer = await response.arrayBuffer();
   // fs.writeFileSync(`audio_${index}.mp3`, Buffer.from(buffer));
 }
