@@ -2,7 +2,8 @@
 import os, json, requests, random, urllib.parse, zipfile
 from gtts import gTTS
 from moviepy.editor import VideoFileClip, concatenate_videoclips, ImageClip
-from faster_whisper import WhisperModel
+import whisper
+
 from PIL import Image, ImageDraw, ImageFont
 import cv2
 import textwrap
@@ -99,14 +100,14 @@ else:
     exit()
 
 if modo_generacion == "video":
-    model = WhisperModel("tiny", device="cpu")
+    model = whisper.load_model("small")
     final_clips = []
 
     for i in range(len(audio_paths)):
         audio_path = audio_paths[i]
         clip_paths = video_paths[i*3:i*3+3]
 
-        result, _ = model.transcribe(audio_path, word_timestamps=True)
+        result = model.transcribe(audio_path)
         duracion = float(subprocess.check_output(['ffprobe', '-v', 'error', '-show_entries',
             'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', audio_path]).strip())
 
