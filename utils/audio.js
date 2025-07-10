@@ -1,5 +1,6 @@
-import gTTS from "gtts";
+// utils/audio.js
 import fs from "fs";
+import gTTS from "gtts";
 
 export async function createAudio(texto, index) {
   return new Promise((resolve, reject) => {
@@ -11,8 +12,8 @@ export async function createAudio(texto, index) {
     });
   });
 
-  // // Comentado: ElevenLabs
-  // const response = await fetch("https://api.elevenlabs.io/...", {...});
+  // // Comentado: ElevenLabs para usar después
+  // const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/...", { method: "POST", headers: {...}, body: ... });
   // const buffer = await response.arrayBuffer();
   // fs.writeFileSync(`audio_${index}.mp3`, Buffer.from(buffer));
 }
