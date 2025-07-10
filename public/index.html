@@ -1,44 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Generador Automático</title>
+<meta charset="UTF-8">
+<title>Generador IA</title>
+<style>body{font-family:sans-serif;padding:20px;background:#111;color:#fff}input,textarea,select,button{width:100%;margin:.5rem 0;padding:.6rem;border-radius:4px;border:none}button{background:#0c9;color:#fff;font-weight:bold;cursor:pointer}#logs{background:#000;padding:1rem;height:200px;overflow-y:auto;white-space:pre-wrap}</style>
 </head>
 <body>
-  <h2>🎬 Generador de Reels o Carrusel</h2>
-  <input type="text" id="eleven_api" placeholder="ElevenLabs API Key"><br>
-  <input type="text" id="pexels_api" placeholder="Pexels API Key"><br>
-  <select id="modo">
-    <option value="video">Video</option>
-    <option value="carrusel">Carrusel</option>
-  </select><br>
-  <textarea id="guiones" rows="5" cols="50" placeholder="Líneas del guion"></textarea><br>
-  <textarea id="etiquetas" rows="5" cols="50" placeholder="Etiquetas en inglés"></textarea><br>
-  <button onclick="enviar()">Empezar</button><br><br>
-  <pre id="consola">Esperando ejecución...</pre><br>
-  <button onclick="descargar()">Descargar</button>
-
-  <script>
-    async function enviar() {
-      document.getElementById("consola").innerText = "Procesando...";
-      const res = await fetch('/generar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          eleven_api: document.getElementById('eleven_api').value,
-          pexels_api: document.getElementById('pexels_api').value,
-          modo: document.getElementById('modo').value,
-          guiones: document.getElementById('guiones').value,
-          etiquetas: document.getElementById('etiquetas').value
-        })
-      });
-      const data = await res.json();
-      document.getElementById("consola").innerText = data.logs || data.error;
-    }
-
-    function descargar() {
-      const modo = document.getElementById('modo').value;
-      window.location.href = modo === "video" ? "/descargar_video" : "/descargar_carrusel";
-    }
-  </script>
+<h1>🎬 Generador IA</h1>
+<input id="eleven" placeholder="ElevenLabs API Key">
+<input id="pexels" placeholder="Pexels API Key">
+<select id="modo"><option value="video">video</option><option value="carrusel">carrusel</option></select>
+<textarea id="guiones" rows="4" placeholder="Escribe cada guion en línea nueva"></textarea>
+<textarea id="etiquetas" rows="4" placeholder="Etiquetas (en inglés)"></textarea>
+<button onclick="empezar()">🚀 Empezar</button>
+<pre id="logs">Esperando...</pre>
+<button onclick="descargar()">⬇️ Descargar resultado</button>
+<script>
+async function empezar() {
+  document.getElementById("logs").innerText="Generando contenido...";
+  const res = await fetch('/generar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    eleven_api:document.getElementById("eleven").value,
+    pexels_api:document.getElementById("pexels").value,
+    modo:document.getElementById("modo").value,
+    guiones:document.getElementById("guiones").value,
+    etiquetas:document.getElementById("etiquetas").value
+  })});
+  const j = await res.json();
+  document.getElementById("logs").innerText = j.logs || j.error;
+}
+function descargar(){
+  const modo = document.getElementById("modo").value;
+  window.location.href = modo==='video'?'/descargar_video':'/descargar_carrusel';
+}
+</script>
 </body>
 </html>
