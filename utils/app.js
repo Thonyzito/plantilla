@@ -2,7 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { generarContenido } from "./generar.js";
-import { generarRecursos } from "./controllers/generarRecursos.js";  // Importa aquí
+import { generarRecursos } from "./controllers/generarRecursos.js";
 import bodyParser from "body-parser";
 import fs from "fs";
 
@@ -23,16 +23,9 @@ app.post("/generar", async (req, res) => {
   try {
     const { eleven_api, pexels_api, modo, guiones, etiquetas } = req.body;
 
-    // Llama a generarRecursos antes de generarContenido
     await generarRecursos({ eleven_api, pexels_api, modo, guiones, etiquetas });
 
-    const result = await generarContenido({
-      eleven_api,
-      pexels_api,
-      modo,
-      guiones,
-      etiquetas
-    });
+    const result = await generarContenido({ modo });
 
     res.json({ success: true, logs: result });
   } catch (err) {
