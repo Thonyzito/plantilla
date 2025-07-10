@@ -1,2 +1,10 @@
-gradio
-pillow
+gradio==4.25.0
+moviepy==1.0.3
+gTTS==2.5.1
+faster-whisper==0.10.0
+requests
+numpy
+opencv-python
+Pillow
+python-dotenv
+ffmpeg-python
