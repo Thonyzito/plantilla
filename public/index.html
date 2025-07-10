@@ -1,100 +1,43 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Generador de Reels y Carruseles</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-      background: #111;
-      color: #fff;
-    }
-    input, textarea, select, button {
-      width: 100%;
-      margin: 0.5rem 0;
-      padding: 0.6rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: none;
-    }
-    button {
-      background: #00c897;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #logs {
-      background: #000;
-      padding: 1rem;
-      white-space: pre-wrap;
-      border: 1px solid #333;
-      height: 300px;
-      overflow-y: scroll;
-      margin-top: 1rem;
-    }
-  </style>
+  <title>Generador Automático</title>
 </head>
 <body>
-  <h1>🎥 Generador IA</h1>
-
-  <label>🔑 ElevenLabs API Key</label>
-  <input id="eleven" type="text" placeholder="tu_clave_de_elevenlabs">
-
-  <label>📷 Pexels API Key</label>
-  <input id="pexels" type="text" placeholder="tu_clave_de_pexels">
-
-  <label>🎛 Modo</label>
+  <h2>🎬 Generador de Reels o Carrusel</h2>
+  <input type="text" id="eleven_api" placeholder="ElevenLabs API Key"><br>
+  <input type="text" id="pexels_api" placeholder="Pexels API Key"><br>
   <select id="modo">
-    <option value="video">video</option>
-    <option value="carrusel">carrusel</option>
-  </select>
-
-  <label>📝 Guiones (una línea por texto)</label>
-  <textarea id="guiones" rows="6">¿Sabías que puedes automatizar tus ventas?</textarea>
-
-  <label>🏷 Etiquetas (una línea por cada guion, en inglés)</label>
-  <textarea id="etiquetas" rows="6">automation</textarea>
-
-  <button onclick="empezar()">🚀 Empezar</button>
-
-  <div id="logs">⌛ Esperando instrucciones...</div>
-
-  <button onclick="descargar()">⬇️ Descargar resultado</button>
+    <option value="video">Video</option>
+    <option value="carrusel">Carrusel</option>
+  </select><br>
+  <textarea id="guiones" rows="5" cols="50" placeholder="Líneas del guion"></textarea><br>
+  <textarea id="etiquetas" rows="5" cols="50" placeholder="Etiquetas en inglés"></textarea><br>
+  <button onclick="enviar()">Empezar</button><br><br>
+  <pre id="consola">Esperando ejecución...</pre><br>
+  <button onclick="descargar()">Descargar</button>
 
   <script>
-    async function empezar() {
-      const data = {
-        eleven_api: document.getElementById("eleven").value,
-        pexels_api: document.getElementById("pexels").value,
-        modo: document.getElementById("modo").value,
-        guiones: document.getElementById("guiones").value,
-        etiquetas: document.getElementById("etiquetas").value,
-      };
-
-      document.getElementById("logs").innerText = "⏳ Generando contenido...";
-
-      try {
-        const res = await fetch("/generar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-        const json = await res.json();
-        if (json.success) {
-          document.getElementById("logs").innerText = json.logs;
-        } else {
-          document.getElementById("logs").innerText = "❌ Error: " + json.error;
-        }
-      } catch (err) {
-        document.getElementById("logs").innerText = "❌ Error inesperado: " + err;
-      }
+    async function enviar() {
+      document.getElementById("consola").innerText = "Procesando...";
+      const res = await fetch('/generar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          eleven_api: document.getElementById('eleven_api').value,
+          pexels_api: document.getElementById('pexels_api').value,
+          modo: document.getElementById('modo').value,
+          guiones: document.getElementById('guiones').value,
+          etiquetas: document.getElementById('etiquetas').value
+        })
+      });
+      const data = await res.json();
+      document.getElementById("consola").innerText = data.logs || data.error;
     }
 
-    async function descargar() {
-      const modo = document.getElementById("modo").value;
-      const endpoint = modo === "video" ? "/descargar_video" : "/descargar_carrusel";
-      window.location.href = endpoint;
+    function descargar() {
+      const modo = document.getElementById('modo').value;
+      window.location.href = modo === "video" ? "/descargar_video" : "/descargar_carrusel";
     }
   </script>
 </body>
